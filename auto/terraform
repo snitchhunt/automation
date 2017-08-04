@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e -u
+
+cd $(dirname $0)/..
+
+docker-compose run --rm --service-ports terraform "${@-version}"
