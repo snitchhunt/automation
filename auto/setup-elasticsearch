@@ -2,12 +2,5 @@
 
 cd $(dirname $0)/..
 
-echo "Initialising..."
-auto/terraform init terraform/s3
-echo "Creating S3 bucket..."
-auto/terraform apply terraform/s3
-
-echo "Initialising..."
-auto/terraform init -force-copy terraform/
 echo "Configuring remote state and creating Elastic Search..."
 auto/terraform apply terraform/

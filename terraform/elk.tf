@@ -7,26 +7,17 @@ provider "aws" {
   region = "${var.region}"
 }
 
-resource "aws_s3_bucket" "b" {
-  bucket = "tw-etang-snitchhunt-testbucket1"
-  acl = "private"
-
-  tags {
-    Name = "My Test Bucket"
-    Environment = "Dev"
-  }
-}
-
-terraform {
-  backend "s3" {
-    bucket = "tw-etang-snitchhunt-testbucket1"
-    key = "terrorform.tfstate"
-    region = "ap-southeast-2"
+data "terraform_remote_state" "snitch-hunt-remote-state" {
+  backend = "s3"
+  config {
+    bucket = "snitch-hunt-terraform-state"
+    key    = "terraform.tfstate"
+    region = "${var.region}"
   }
 }
 
 resource "aws_elasticsearch_domain" "es" {
-  domain_name           = "tf-pam-test"
+  domain_name           = "snitch-hunt-elastic-search"
   elasticsearch_version = "5.3"
   cluster_config {
     instance_type = "t2.small.elasticsearch"
@@ -53,7 +44,7 @@ resource "aws_elasticsearch_domain" "es" {
 CONFIG
   ebs_options {
     ebs_enabled = true
-    volume_size = 10
+    volume_size = 20
     volume_type = "gp2"
   }
 
@@ -62,6 +53,6 @@ CONFIG
   }
 
   tags {
-    Domain = "tf-pam-test"
+    Domain = "snitch-hunt-elastic-search"
   }
 }
