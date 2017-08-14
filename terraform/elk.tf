@@ -7,11 +7,23 @@ provider "aws" {
   region = "${var.region}"
 }
 
-#terraform {
-#  backend "s3" {
-    # Empty config here because each organisation will configure its own remote state
-#  }
-#}
+resource "aws_s3_bucket" "b" {
+  bucket = "tw-etang-snitchhunt-testbucket1"
+  acl = "private"
+
+  tags {
+    Name = "My Test Bucket"
+    Environment = "Dev"
+  }
+}
+
+terraform {
+  backend "s3" {
+    bucket = "tw-etang-snitchhunt-testbucket1"
+    key = "terrorform.tfstate"
+    region = "ap-southeast-2"
+  }
+}
 
 resource "aws_elasticsearch_domain" "es" {
   domain_name           = "tf-pam-test"
