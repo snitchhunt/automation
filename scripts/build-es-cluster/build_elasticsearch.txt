@@ -1,0 +1,49 @@
+add-apt-repository -y ppa:webupd8team/java
+
+wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+
+echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" | sudo tee -a /etc/apt/sources.list
+echo "deb https://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
+echo "deb http://packages.elastic.co/kibana/4.5/debian stable main" | sudo tee -a /etc/apt/sources.list
+
+apt-get update
+apt-get upgrade -y
+
+apt-get -y install screen git ntp p7zip-full htop
+
+apt-get -y install oracle-java8-installer
+java -version
+
+apt-get -y install elasticsearch logstash kibana
+
+update-rc.d elasticsearch defaults 95 10
+update-rc.d kibana defaults 95 10
+
+fallocate -l 2g /swapfile
+mkswap /swapfile 
+chmod 600 /swapfile
+swapon /swapfile
+sysctl -w vm.swappiness=1
+
+# ElasticHQ will be avaliable under /domain:port/_plugin/hq/
+/usr/share/elasticsearch/bin/plugin install royrusso/elasticsearch-HQ
+
+# Install Marvel
+/usr/share/elasticsearch/bin/plugin install license
+/usr/share/elasticsearch/bin/plugin install marvel-agent
+/opt/kibana/bin/kibana plugin --install elasticsearch/marvel/2.3.4
+chown kibana:root /opt/kibana/optimize/.babelcache.json
+
+# Install Shield
+#/usr/share/elasticsearch/bin/plugin install shield
+#/usr/share/elasticsearch/bin/shield/esusers useradd es_admin -r admin
+
+# Install SQL plugin https://github.com/NLPchina/elasticsearch-sql
+#/usr/share/elasticsearch/bin/plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/2.3.4.0/elasticsearch-sql-2.3.4.0.zip 
+
+# Install Graph
+/usr/share/elasticsearch/bin/plugin install graph
+/opt/kibana/bin/kibana plugin --install elasticsearch/graph/latest
+
+/etc/init.d/elasticsearch start
+/etc/init.d/kibana start

@@ -1,0 +1,26 @@
+echo 'ES_HEAP_SIZE=4g' >> /etc/default/elasticsearch
+echo 'MAX_MAP_COUNT=262144' >> /etc/default/elasticsearch
+echo 'MAX_OPEN_FILES=131070' >> /etc/default/elasticsearch
+echo 'MAX_LOCKED_MEMORY=unlimited' >> /etc/default/elasticsearch
+
+echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+
+echo 'vm.swappiness = 1' > /etc/sysctl.d/10-swappiness.conf
+
+echo 'elasticsearch - nofile 65535' >> /etc/security/limits.conf
+echo 'elasticsearch - memlock unlimited' >> /etc/security/limits.conf
+echo 'root - memlock unlimited' >> /etc/security/limits.conf
+
+
+/etc/elasticsearch/elasticsearch.yml
+cluster.name: platypuslovescrypto
+node.name: node-1
+bootstrap.mlockall: true
+network.host: [_eth0_, _local_]
+discovery.zen.ping.multicast.enabled: false
+#discovery.zen.minimum_master_nodes: 2
+discovery.zen.ping.unicast.hosts: [ "node-1", "node-2", "node-3" ]
+http.cors.enabled: true
+http.cors.allow-origin: "/.*/"
+index.refresh_interval: -1
+indices.fielddata.cache.size: 25%

@@ -1,0 +1,14 @@
+curl -XPUT 'localhost:9200/_settings' -d '
+{
+    "index" : {
+        "number_of_replicas" : 2
+    }
+}'
+
+curl -XPUT 'http://node-1.platypuslovescrypto.party:9200/_license?acknowledge=true' -d @license.json
+curl -XPUT 'http://node-2.platypuslovescrypto.party:9200/_license?acknowledge=true' -d @license.json
+curl -XPUT 'http://node-3.platypuslovescrypto.party:9200/_license?acknowledge=true' -d @license.json
+
+curl -XPOST 'http://localhost:9200/_refresh'
+
+curl -XDELETE localhost:9200/.kibana/config/4.5.4
